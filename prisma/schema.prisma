@@ -1,0 +1,118 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+enum UserRole {
+  STAFF
+  ADMIN
+}
+
+enum PackageStatus {
+  PENDING
+  IN_TRANSIT
+  ARRIVED
+  DELIVERED
+  CANCELLED
+}
+
+enum MovementType {
+  REGISTERED
+  DISPATCHED
+  ARRIVED
+  DELIVERED
+  CANCELLED
+  NOTE
+}
+
+model Branch {
+  id              String    @id @default(cuid())
+  name            String
+  code            String    @unique
+  city            String
+  address         String?
+  phone           String?
+  isActive        Boolean   @default(true)
+  createdAt       DateTime  @default(now())
+  updatedAt       DateTime  @updatedAt
+  originPackages  Package[] @relation("OriginBranch")
+  destinationPkgs Package[] @relation("DestinationBranch")
+  users           User[]
+  movements       Movement[]
+}
+
+model User {
+  id           String     @id @default(cuid())
+  name         String
+  email        String     @unique
+  passwordHash String
+  role         UserRole   @default(STAFF)
+  branchId     String?
+  branch       Branch?    @relation(fields: [branchId], references: [id])
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+  packages     Package[]
+  movements    Movement[]
+}
+
+model Package {
+  id                    String         @id @default(cuid())
+  trackingCode          String         @unique
+  sequenceNumber        Int
+  senderName            String
+  senderNationalId      String
+  senderPhone           String
+  receiverName          String
+  receiverNationalId    String
+  receiverPhone         String
+  packageType           String
+  description           String
+  weightKg              Decimal?       @db.Decimal(8, 2)
+  status                PackageStatus  @default(PENDING)
+  originBranchId        String
+  originBranch          Branch         @relation("OriginBranch", fields: [originBranchId], references: [id])
+  destinationBranchId   String
+  destinationBranch     Branch         @relation("DestinationBranch", fields: [destinationBranchId], references: [id])
+  createdById           String
+  createdBy             User           @relation(fields: [createdById], references: [id])
+  deliveredAt           DateTime?
+  deliveredToNationalId String?
+  createdAt             DateTime       @default(now())
+  updatedAt             DateTime       @updatedAt
+  movements             Movement[]
+
+  @@index([trackingCode])
+  @@index([status])
+  @@index([originBranchId])
+  @@index([destinationBranchId])
+}
+
+model Movement {
+  id        String       @id @default(cuid())
+  packageId String
+  package   Package      @relation(fields: [packageId], references: [id], onDelete: Cascade)
+  branchId  String
+  branch    Branch       @relation(fields: [branchId], references: [id])
+  userId    String?
+  user      User?        @relation(fields: [userId], references: [id])
+  type      MovementType
+  status    PackageStatus
+  note      String
+  createdAt DateTime     @default(now())
+
+  @@index([packageId])
+  @@index([createdAt])
+}
+
+model TrackingSequence {
+  id       String @id @default(cuid())
+  branchId String
+  year     Int
+  value    Int    @default(0)
+
+  @@unique([branchId, year])
+}
