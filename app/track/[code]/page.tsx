@@ -1,6 +1,7 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
 import { ArrowLeft, PackageSearch } from "lucide-react";
+import { Brand } from "@/components/brand";
 import { StatusBadge } from "@/components/status-badge";
 import { Timeline } from "@/components/timeline";
 import { initialsName, maskPhone } from "@/lib/privacy";
@@ -27,10 +28,7 @@ export default async function PublicTrackingPage({ params }: { params: Promise<{
   return (
     <main className="site-shell">
       <nav className="public-nav">
-        <Link href="/" className="brand">
-          <span className="brand-mark">E</span>
-          <span>Eagle Courier</span>
-        </Link>
+        <Brand href="/" />
         <Link href="/" className="nav-links">
           <ArrowLeft size={17} />
           Track another

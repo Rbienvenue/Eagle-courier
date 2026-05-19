@@ -3,6 +3,7 @@ import { notFound } from "next/navigation";
 import { Download } from "lucide-react";
 import { PrintButton } from "@/components/print-button";
 import { StatusBadge } from "@/components/status-badge";
+import { Brand } from "@/components/brand";
 import { createQrDataUrl } from "@/lib/qr";
 import { prisma } from "@/lib/prisma";
 import { trackingUrl } from "@/lib/tracking";
@@ -36,10 +37,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
       <article className="receipt">
         <header className="receipt-header">
           <div>
-            <div className="brand">
-              <span className="brand-mark">E</span>
-              <span>Eagle Courier</span>
-            </div>
+            <Brand />
             <h1 style={{ marginBottom: "0.35rem" }}>Package Receipt</h1>
             <StatusBadge status={pkg.status} />
           </div>

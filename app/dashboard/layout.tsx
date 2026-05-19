@@ -2,6 +2,7 @@ import Link from "next/link";
 import { Boxes, Building2, LayoutDashboard, LogOut, PackagePlus } from "lucide-react";
 import { logoutAction } from "@/app/actions/auth";
 import { requireUser } from "@/lib/session";
+import { Brand } from "@/components/brand";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await requireUser();
@@ -9,10 +10,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
   return (
     <main className="site-shell">
       <nav className="dashboard-nav">
-        <Link href="/dashboard" className="brand">
-          <span className="brand-mark">E</span>
-          <span>Eagle Ops</span>
-        </Link>
+        <Brand href="/dashboard" title="Eagle Ops" caption="Courier & Cargo" />
         <div className="nav-links">
           <Link href="/dashboard">
             <LayoutDashboard size={17} /> Dashboard

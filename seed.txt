@@ -1,0 +1,23 @@
+
+> eagle-courier-management@0.1.0 prisma:seed
+> tsx prisma/seed.ts
+
+PrismaClientKnownRequestError: 
+Invalid `prisma.branch.upsert()` invocation in
+c:\Users\Papa Logan\Documents\Codex\2026-05-15\x10think-i-want-you-to-help\prisma\seed.ts:13:21
+
+  10   { name: "Huye Branch", code: "HYE", city: "Huye", address: "Main Road, Huye", phone: "+250 788 200 200" },
+  11   { name: "Musanze Branch", code: "MSZ", city: "Musanze", address: "RN4, Musanze", phone: "+250 788 300 300" }
+  12 ].map((branch) =>
+→ 13   prisma.branch.upsert(
+The table `public.Branch` does not exist in the current database.
+    at $n.handleRequestError (c:\Users\Papa Logan\Documents\Codex\2026-05-15\x10think-i-want-you-to-help\node_modules\@prisma\client\runtime\library.js:121:7315)
+    at $n.handleAndLogRequestError (c:\Users\Papa Logan\Documents\Codex\2026-05-15\x10think-i-want-you-to-help\node_modules\@prisma\client\runtime\library.js:121:6623)
+    at $n.request (c:\Users\Papa Logan\Documents\Codex\2026-05-15\x10think-i-want-you-to-help\node_modules\@prisma\client\runtime\library.js:121:6307)
+    at async l (c:\Users\Papa Logan\Documents\Codex\2026-05-15\x10think-i-want-you-to-help\node_modules\@prisma\client\runtime\library.js:130:9633)
+    at async Promise.all (index 2)
+    at async main (c:\Users\Papa Logan\Documents\Codex\2026-05-15\x10think-i-want-you-to-help\prisma\seed.ts:7:20) {
+  code: 'P2021',
+  clientVersion: '5.22.0',
+  meta: { modelName: 'Branch', table: 'public.Branch' }
+}

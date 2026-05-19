@@ -1,14 +1,12 @@
 import { ArrowRight, MapPin, PackageCheck, QrCode, Truck } from "lucide-react";
 import Link from "next/link";
+import { Brand } from "@/components/brand";
 
 export default function HomePage() {
   return (
     <main className="site-shell">
       <nav className="public-nav">
-        <Link href="/" className="brand">
-          <span className="brand-mark">E</span>
-          <span>Eagle Courier</span>
-        </Link>
+        <Brand href="/" />
         <div className="nav-links">
           <Link href="/login">Staff login</Link>
         </div>
@@ -55,6 +53,32 @@ export default function HomePage() {
               <ArrowRight size={18} />
             </button>
           </form>
+        </div>
+      </section>
+      <section className="page qa-section">
+        <div className="qa-header">
+          <h2>Questions & Answers</h2>
+          <p>Everything you need to know about Eagle Courier and how our package tracking works.</p>
+        </div>
+        <div className="qa-grid">
+          <details className="qa-card" open>
+            <summary>How can customers track their shipment?</summary>
+            <div className="qa-body">
+              <p>Use the tracking code printed on the receipt or scan the package QR code to see delivery status and branch moves.</p>
+            </div>
+          </details>
+          <details className="qa-card">
+            <summary>Can staff update package movement?</summary>
+            <div className="qa-body">
+              <p>Yes, branch staff can register new packages, mark movements, and update delivery status in the dashboard.</p>
+            </div>
+          </details>
+          <details className="qa-card">
+            <summary>Is sensitive receiver data protected?</summary>
+            <div className="qa-body">
+              <p>The public tracking page masks personal details while still showing package route and delivery progress.</p>
+            </div>
+          </details>
         </div>
       </section>
     </main>

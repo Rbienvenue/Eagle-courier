@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 360 120" role="img" aria-labelledby="logoTitle logoDesc">
+  <title id="logoTitle">Eagle Courier and Cargo Services Ltd Logo</title>
+  <desc id="logoDesc">A stylized eagle carrying a package with bold company typography.</desc>
+  <defs>
+    <linearGradient id="blueGradient" x1="0" y1="0" x2="0" y2="1">
+      <stop offset="0%" stop-color="#0b3f82"/>
+      <stop offset="100%" stop-color="#1859a4"/>
+    </linearGradient>
+    <linearGradient id="accentGradient" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0%" stop-color="#f2b234"/>
+      <stop offset="100%" stop-color="#e69b14"/>
+    </linearGradient>
+  </defs>
+  <g transform="translate(12 12)">
+    <path d="M12 56 C30 18 68 10 90 34 C110 58 138 54 150 46" fill="none" stroke="url(#blueGradient)" stroke-width="12" stroke-linecap="round" stroke-linejoin="round"/>
+    <path d="M82 26 C88 10 106 8 118 22 C124 30 118 42 108 48" fill="none" stroke="#0b3f82" stroke-width="8" stroke-linecap="round"/>
+    <path d="M88 46 L102 26 L116 32 L110 46 Z" fill="#0b3f82"/>
+    <path d="M148 46 L188 44 L202 62 L162 66 Z" fill="#1859a4"/>
+    <path d="M156 48 L176 34 L198 50 L182 64 Z" fill="#0b3f82"/>
+    <path d="M204 34 H230 V58 H204 Z" fill="url(#blueGradient)"/>
+    <path d="M204 34 L220 24 L246 24 L246 58 L232 68 L204 68 Z" fill="#1859a4"/>
+    <path d="M216 26 V68" stroke="#fff" stroke-width="3"/>
+    <path d="M222 24 L222 68" stroke="#fff" stroke-width="3"/>
+    <path d="M204 46 H246" stroke="#fff" stroke-width="3"/>
+  </g>
+  <text x="12" y="98" font-family="Inter, Arial, sans-serif" font-size="20" font-weight="800" fill="#0b3f82">EAGLE COURIER</text>
+  <text x="12" y="116" font-family="Inter, Arial, sans-serif" font-size="10" fill="#1859a4" letter-spacing="0.15em">COURIER AND CARGO SERVICES LTD</text>
+</svg>
