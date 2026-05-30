@@ -10,6 +10,67 @@
   --surface: #ffffff;
 }
 
+/* Dark theme overrides */
+[data-theme="dark"] {
+  --background: #0b1220;
+  --foreground: #e6eef8;
+  --muted: #9fb0d0;
+  --line: #17202a;
+  --brand: #1f6feb;
+  --brand-dark: #94b8ff;
+  --brand-soft: rgba(31,110,235,0.08);
+  --accent: #f2b234;
+  --surface: #071024;
+}
+
+/* Dark-specific component refinements to improve contrast */
+[data-theme="dark"] .stat {
+  background: rgba(255, 255, 255, 0.02);
+  border: 1px solid rgba(255, 255, 255, 0.03);
+}
+
+[data-theme="dark"] .stat strong {
+  color: var(--brand);
+}
+
+[data-theme="dark"] .stat span {
+  color: var(--muted);
+}
+
+[data-theme="dark"] .table-wrap {
+  background: transparent;
+  border: 1px solid var(--line);
+}
+
+[data-theme="dark"] table {
+  color: var(--foreground);
+}
+
+[data-theme="dark"] th,
+[data-theme="dark"] td {
+  border-bottom: 1px solid var(--line);
+}
+
+[data-theme="dark"] th {
+  color: var(--muted);
+}
+
+[data-theme="dark"] td {
+  color: var(--foreground);
+  background: rgba(255,255,255,0.01);
+}
+
+[data-theme="dark"] .track-card h2,
+[data-theme="dark"] .panel h2,
+[data-theme="dark"] .form-section h2 {
+  color: var(--foreground);
+}
+
+[data-theme="dark"] .primary-button,
+[data-theme="dark"] .secondary-button {
+  box-shadow: none;
+}
+
 * {
   box-sizing: border-box;
 }
@@ -17,7 +78,7 @@
 body {
   margin: 0;
   min-height: 100vh;
-  background: radial-gradient(circle at top left, rgba(11, 63, 130, 0.12), transparent 24%), linear-gradient(180deg, #f7fbff 0%, #e9f5ff 100%);
+  background: var(--background);
   color: var(--foreground);
   font-family: Inter, Arial, Helvetica, sans-serif;
 }
@@ -33,7 +94,7 @@ textarea {
   width: 100%;
   border: 1px solid var(--line);
   border-radius: 6px;
-  background: white;
+  background: var(--surface);
   color: var(--foreground);
   font: inherit;
   padding: 0.78rem 0.9rem;
@@ -64,8 +125,8 @@ button:disabled {
   align-items: center;
   justify-content: space-between;
   gap: 1rem;
-  border-bottom: 1px solid rgba(11, 63, 130, 0.14);
-  background: rgba(255, 255, 255, 0.94);
+  border-bottom: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.06);
   backdrop-filter: blur(10px);
   padding: 1rem clamp(1rem, 4vw, 3rem);
 }
@@ -163,7 +224,7 @@ button:disabled {
 .form-section {
   border: 1px solid var(--line);
   border-radius: 8px;
-  background: white;
+  background: var(--surface);
   padding: 1.25rem;
 }
 
@@ -207,8 +268,8 @@ button:disabled {
 }
 
 .secondary-button {
-  border: 1px solid rgba(11, 63, 130, 0.18);
-  background: white;
+  border: 1px solid var(--line);
+  background: var(--surface);
   color: var(--foreground);
 }
 
@@ -257,11 +318,25 @@ button:disabled {
 }
 
 .qa-card {
-  border: 1px solid rgba(11, 63, 130, 0.1);
-  background: rgba(255, 255, 255, 0.92);
+  border: 1px solid var(--line);
+  background: rgba(255, 255, 255, 0.02);
   border-radius: 18px;
   padding: 1.25rem 1.35rem;
   box-shadow: 0 16px 40px rgba(11, 63, 130, 0.04);
+}
+
+/* Theme toggle button */
+.theme-toggle {
+  position: fixed;
+  right: 1rem;
+  bottom: 1rem;
+  z-index: 9999;
+  background: var(--surface);
+  border: 1px solid var(--line);
+  color: var(--foreground);
+  padding: 0.5rem 0.7rem;
+  border-radius: 999px;
+  box-shadow: 0 6px 18px rgba(2,6,23,0.25);
 }
 
 .qa-card summary {

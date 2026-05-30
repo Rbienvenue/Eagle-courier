@@ -16,19 +16,27 @@ function movementTypeForStatus(status: PackageStatus) {
   return MovementType.NOTE;
 }
 
-export async function createPackageAction(_prevState: { error?: string }, formData: FormData) {
+export async function createPackageAction(_prevState: { error?: string; fieldErrors?: Record<string, string> }, formData: FormData) {
   const user = await requireUser();
-  const parsed = packageSchema.safeParse(Object.fromEntries(formData));
   const submittedValues = Object.fromEntries(formData);
+  const parsed = packageSchema.safeParse(Object.fromEntries(formData));
 
   if (!parsed.success) {
-    return { error: "Please complete all required package fields.", values: submittedValues };
+    const flattened = parsed.error.flatten();
+    const fieldErrors = Object.fromEntries(
+      Object.entries(flattened.fieldErrors).flatMap(([key, messages]) =>
+        messages && messages.length ? [[key, messages[0]]] : []
+      )
+    ) as Record<string, string>;
+
+    return {
+      error: "Please fix the highlighted fields.",
+      values: submittedValues,
+      fieldErrors
+    };
   }
 
   const data = parsed.data;
-  if (data.originBranchId === data.destinationBranchId) {
-    return { error: "Origin and destination branches must be different.", values: submittedValues };
-  }
 
   const { trackingCode, sequenceNumber } = await generateTrackingCode(data.originBranchId);
 
@@ -91,7 +99,9 @@ export async function updateMovementAction(_prevState: { error?: string; success
       ? `Package departed from ${pkg.originBranch.name}`
       : parsed.data.status === PackageStatus.ARRIVED
         ? `Package arrived at ${pkg.destinationBranch.name}`
-        : `Package status updated to ${parsed.data.status}`);
+        : parsed.data.status === PackageStatus.CANCELLED
+          ? "Package was canceled"
+          : `Package status updated to ${parsed.data.status}`);
 
   await prisma.$transaction([
     prisma.package.update({
