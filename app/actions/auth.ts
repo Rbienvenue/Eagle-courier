@@ -5,7 +5,9 @@ import { clearSession, setSession, verifyPassword } from "@/lib/session";
 import { prisma } from "@/lib/prisma";
 import { loginSchema } from "@/lib/validators";
 
-export async function loginAction(_prevState: { error?: string }, formData: FormData) {
+type LoginState = { error?: string };
+
+export async function loginAction(_prevState: LoginState, formData: FormData): Promise<LoginState> {
   const parsed = loginSchema.safeParse(Object.fromEntries(formData));
 
   if (!parsed.success) {

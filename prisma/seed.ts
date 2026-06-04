@@ -23,25 +23,36 @@ async function main() {
 
   const admin = await prisma.user.upsert({
     where: { email: "admin@eaglecourier.rw" },
-    update: { passwordHash, branchId: kigali.id, role: UserRole.ADMIN },
+    update: { passwordHash, branchId: kigali.id, role: UserRole.SUPER_ADMIN },
     create: {
       name: "Aline Admin",
       email: "admin@eaglecourier.rw",
       passwordHash,
-      role: UserRole.ADMIN,
+      role: UserRole.SUPER_ADMIN,
       branchId: kigali.id
     }
   });
 
   await prisma.user.upsert({
     where: { email: "staff.kigali@eaglecourier.rw" },
-    update: { passwordHash, branchId: kigali.id, role: UserRole.STAFF },
+    update: { passwordHash, branchId: kigali.id, role: UserRole.SERVICE_PROVIDER },
     create: {
       name: "Claude Staff",
       email: "staff.kigali@eaglecourier.rw",
       passwordHash,
-      role: UserRole.STAFF,
+      role: UserRole.SERVICE_PROVIDER,
       branchId: kigali.id
+    }
+  });
+
+  await prisma.user.upsert({
+    where: { email: "accountant@eaglecourier.rw" },
+    update: { passwordHash, branchId: null, role: UserRole.ACCOUNTANT },
+    create: {
+      name: "Denise Accountant",
+      email: "accountant@eaglecourier.rw",
+      passwordHash,
+      role: UserRole.ACCOUNTANT
     }
   });
 
@@ -65,6 +76,7 @@ async function main() {
       receiverPhone: "+250788333444",
       packageType: "Documents",
       description: "Sealed document envelope",
+      price: 2500,
       status: PackageStatus.ARRIVED,
       originBranchId: kigali.id,
       destinationBranchId: huye.id,

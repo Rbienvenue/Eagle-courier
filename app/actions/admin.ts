@@ -2,11 +2,16 @@
 
 import { revalidatePath } from "next/cache";
 import { prisma } from "@/lib/prisma";
-import { createPasswordHash, requireAdmin } from "@/lib/session";
+import { createPasswordHash, requireSuperAdmin } from "@/lib/session";
 import { branchSchema, userSchema } from "@/lib/validators";
 
-export async function createBranchAction(_prevState: { error?: string; success?: string }, formData: FormData) {
-  await requireAdmin();
+type ActionMessageState = {
+  error?: string;
+  success?: string;
+};
+
+export async function createBranchAction(_prevState: ActionMessageState, formData: FormData): Promise<ActionMessageState> {
+  await requireSuperAdmin();
   const parsed = branchSchema.safeParse(Object.fromEntries(formData));
 
   if (!parsed.success) {
@@ -18,8 +23,8 @@ export async function createBranchAction(_prevState: { error?: string; success?:
   return { success: "Branch created." };
 }
 
-export async function createUserAction(_prevState: { error?: string; success?: string }, formData: FormData) {
-  await requireAdmin();
+export async function createUserAction(_prevState: ActionMessageState, formData: FormData): Promise<ActionMessageState> {
+  await requireSuperAdmin();
   const parsed = userSchema.safeParse(Object.fromEntries(formData));
 
   if (!parsed.success) {

@@ -2,9 +2,12 @@ import Link from "next/link";
 import { Prisma } from "@prisma/client";
 import { SearchBox } from "@/components/search-box";
 import { StatusBadge } from "@/components/status-badge";
+import { formatMoney } from "@/lib/money";
 import { prisma } from "@/lib/prisma";
+import { requirePackageOperator } from "@/lib/session";
 
 export default async function PackagesPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
+  await requirePackageOperator();
   const { q } = await searchParams;
   const query = q?.trim();
   const where: Prisma.PackageWhereInput | undefined = query
@@ -47,6 +50,7 @@ export default async function PackagesPage({ searchParams }: { searchParams: Pro
               <th>Sender</th>
               <th>Receiver</th>
               <th>Route</th>
+              <th>Price</th>
               <th>Status</th>
               <th></th>
             </tr>
@@ -60,6 +64,7 @@ export default async function PackagesPage({ searchParams }: { searchParams: Pro
                 <td>
                   {pkg.originBranch.code} to {pkg.destinationBranch.code}
                 </td>
+                <td>{formatMoney(pkg.price)}</td>
                 <td>
                   <StatusBadge status={pkg.status} />
                 </td>
@@ -70,7 +75,7 @@ export default async function PackagesPage({ searchParams }: { searchParams: Pro
             ))}
             {packages.length === 0 ? (
               <tr>
-                <td colSpan={6}>No packages found.</td>
+                <td colSpan={7}>No packages found.</td>
               </tr>
             ) : null}
           </tbody>

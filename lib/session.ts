@@ -53,9 +53,37 @@ export async function requireUser() {
 }
 
 export async function requireAdmin() {
+  return requireSuperAdmin();
+}
+
+export async function requireRole(roles: UserRole[]) {
   const user = await requireUser();
-  if (user.role !== UserRole.ADMIN) {
+  if (!roles.includes(user.role)) {
     redirect("/dashboard");
   }
   return user;
+}
+
+export async function requireSuperAdmin() {
+  return requireRole([UserRole.SUPER_ADMIN]);
+}
+
+export async function requirePackageOperator() {
+  return requireRole([UserRole.SERVICE_PROVIDER, UserRole.SUPER_ADMIN]);
+}
+
+export async function requireReportsAccess() {
+  return requireRole([UserRole.ACCOUNTANT, UserRole.SUPER_ADMIN]);
+}
+
+export function canOperatePackages(role: UserRole) {
+  return role === UserRole.SERVICE_PROVIDER || role === UserRole.SUPER_ADMIN;
+}
+
+export function canViewReports(role: UserRole) {
+  return role === UserRole.ACCOUNTANT || role === UserRole.SUPER_ADMIN;
+}
+
+export function canManageSystem(role: UserRole) {
+  return role === UserRole.SUPER_ADMIN;
 }

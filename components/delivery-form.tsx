@@ -16,7 +16,7 @@ function SubmitButton() {
 }
 
 export function DeliveryForm({ packageId }: { packageId: string }) {
-  const [state, action] = React.useActionState(deliverPackageAction, {});
+  const [state, action] = React.useActionState(deliverPackageAction, { error: "", success: "" });
 
   return (
     <form action={action} className="panel space-y-4">

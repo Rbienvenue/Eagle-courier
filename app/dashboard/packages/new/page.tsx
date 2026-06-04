@@ -1,9 +1,9 @@
 import { PackageForm } from "@/components/package-form";
 import { prisma } from "@/lib/prisma";
-import { requireUser } from "@/lib/session";
+import { requirePackageOperator } from "@/lib/session";
 
 export default async function NewPackagePage() {
-  const user = await requireUser();
+  const user = await requirePackageOperator();
   const branches = await prisma.branch.findMany({
     where: { isActive: true },
     orderBy: { name: "asc" },

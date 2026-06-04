@@ -17,6 +17,11 @@ export const packageSchema = z.object({
   destinationBranchId: z.string().min(1, "Choose a destination branch."),
   packageType: z.string().min(2, "Package type must be at least 2 characters."),
   description: z.string().min(3, "Description must be at least 3 characters."),
+  price: z.string()
+    .min(1, "Price is required.")
+    .regex(/^[0-9]+(\.[0-9]+)?$/, "Price must be a valid amount.")
+    .transform(Number)
+    .refine((value) => value >= 0, { message: "Price cannot be negative." }),
   weightKg: z.string()
     .min(1, "Weight is required.")
     .regex(/^[0-9]+(\.[0-9]+)?$/, "Weight must be a valid number.")
@@ -72,6 +77,6 @@ export const userSchema = z.object({
   name: z.string().min(2),
   email: z.string().email(),
   password: z.string().min(8),
-  role: z.enum(["STAFF", "ADMIN"]),
+  role: z.enum(["SERVICE_PROVIDER", "ACCOUNTANT", "SUPER_ADMIN"]),
   branchId: z.string().optional()
 });

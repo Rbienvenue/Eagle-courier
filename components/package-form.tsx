@@ -22,9 +22,16 @@ type FieldErrors = Partial<Record<
   | "destinationBranchId"
   | "packageType"
   | "description"
+  | "price"
   | "weightKg",
   string
 >>;
+
+type PackageFormState = {
+  error?: string;
+  values?: Record<string, string>;
+  fieldErrors?: Record<string, string>;
+};
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -47,7 +54,11 @@ function renderFieldError(fieldId: string, message?: string) {
 
 export function PackageForm({ branches, defaultOriginId }: { branches: Branch[]; defaultOriginId?: string | null }) {
   const [fieldErrors, setFieldErrors] = React.useState<FieldErrors>({});
-  const [state, action] = React.useActionState(createPackageAction, {});
+  const [state, action] = React.useActionState(createPackageAction, {
+    error: "",
+    values: {},
+    fieldErrors: {}
+  } satisfies PackageFormState);
   const serverFieldErrors = (state.fieldErrors ?? {}) as FieldErrors;
   const errors = { ...serverFieldErrors, ...fieldErrors };
 
@@ -64,6 +75,7 @@ export function PackageForm({ branches, defaultOriginId }: { branches: Branch[];
       destinationBranchId: formData.get("destinationBranchId")?.toString().trim() ?? "",
       packageType: formData.get("packageType")?.toString().trim() ?? "",
       description: formData.get("description")?.toString().trim() ?? "",
+      price: formData.get("price")?.toString().trim() ?? "",
       weightKg: formData.get("weightKg")?.toString().trim() ?? ""
     };
 
@@ -106,6 +118,10 @@ export function PackageForm({ branches, defaultOriginId }: { branches: Branch[];
 
     if (!values.description) nextErrors.description = "Description is required.";
     else if (values.description.length < 3) nextErrors.description = "Description must be at least 3 characters.";
+
+    if (!values.price) nextErrors.price = "Price is required.";
+    else if (!/^[0-9]+(\.[0-9]+)?$/.test(values.price)) nextErrors.price = "Price must be a valid amount.";
+    else if (Number(values.price) < 0) nextErrors.price = "Price cannot be negative.";
 
     if (!values.weightKg) nextErrors.weightKg = "Weight is required.";
     else if (!/^[0-9]+(\.[0-9]+)?$/.test(values.weightKg)) nextErrors.weightKg = "Weight must be a valid number.";
@@ -249,6 +265,20 @@ export function PackageForm({ branches, defaultOriginId }: { branches: Branch[];
               aria-invalid={errors.packageType ? "true" : "false"}
             />
             {renderFieldError("packageType", errors.packageType)}
+          </label>
+          <label className="field">
+            <span>Price / Amount paid</span>
+            <input
+              name="price"
+              type="number"
+              step="1"
+              min="0"
+              required
+              defaultValue={state.values?.price ?? ""}
+              aria-describedby={errors.price ? "priceError" : undefined}
+              aria-invalid={errors.price ? "true" : "false"}
+            />
+            {renderFieldError("price", errors.price)}
           </label>
           <label className="field">
             <span>Weight kg</span>

@@ -6,10 +6,13 @@ import { DeliveryForm } from "@/components/delivery-form";
 import { MovementForm } from "@/components/movement-form";
 import { StatusBadge } from "@/components/status-badge";
 import { Timeline } from "@/components/timeline";
+import { formatMoney } from "@/lib/money";
 import { maskNationalId } from "@/lib/privacy";
 import { prisma } from "@/lib/prisma";
+import { requirePackageOperator } from "@/lib/session";
 
 export default async function PackageDetailPage({ params }: { params: Promise<{ id: string }> }) {
+  await requirePackageOperator();
   const { id } = await params;
   const [pkg, branches] = await Promise.all([
     prisma.package.findUnique({
@@ -67,6 +70,9 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
               <p style={{ color: "var(--muted)" }}>Package</p>
               <strong>{pkg.packageType}</strong>
               <p>{pkg.description}</p>
+              <p>
+                <strong>Price:</strong> {formatMoney(pkg.price)}
+              </p>
             </div>
           </div>
           <div style={{ marginTop: "1rem" }}>

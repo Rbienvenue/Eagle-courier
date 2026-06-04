@@ -4,9 +4,24 @@ import { MovementType, PackageStatus } from "@prisma/client";
 import { revalidatePath } from "next/cache";
 import { redirect } from "next/navigation";
 import { prisma } from "@/lib/prisma";
-import { requireUser } from "@/lib/session";
+import { requirePackageOperator } from "@/lib/session";
 import { generateTrackingCode } from "@/lib/tracking";
 import { deliverySchema, movementSchema, packageSchema } from "@/lib/validators";
+
+type PackageFormState = {
+  error?: string;
+  values?: Record<string, string>;
+  fieldErrors?: Record<string, string>;
+};
+
+type ActionMessageState = {
+  error?: string;
+  success?: string;
+};
+
+function formValues(formData: FormData) {
+  return Object.fromEntries(Array.from(formData.entries()).map(([key, value]) => [key, value.toString()]));
+}
 
 function movementTypeForStatus(status: PackageStatus) {
   if (status === PackageStatus.IN_TRANSIT) return MovementType.DISPATCHED;
@@ -16,9 +31,9 @@ function movementTypeForStatus(status: PackageStatus) {
   return MovementType.NOTE;
 }
 
-export async function createPackageAction(_prevState: { error?: string; fieldErrors?: Record<string, string> }, formData: FormData) {
-  const user = await requireUser();
-  const submittedValues = Object.fromEntries(formData);
+export async function createPackageAction(_prevState: PackageFormState, formData: FormData): Promise<PackageFormState> {
+  const user = await requirePackageOperator();
+  const submittedValues = formValues(formData);
   const parsed = packageSchema.safeParse(Object.fromEntries(formData));
 
   if (!parsed.success) {
@@ -52,6 +67,7 @@ export async function createPackageAction(_prevState: { error?: string; fieldErr
       receiverPhone: data.receiverPhone,
       packageType: data.packageType,
       description: data.description,
+      price: data.price,
       weightKg: data.weightKg,
       originBranchId: data.originBranchId,
       destinationBranchId: data.destinationBranchId,
@@ -72,8 +88,8 @@ export async function createPackageAction(_prevState: { error?: string; fieldErr
   redirect(`/dashboard/packages/${pkg.id}/receipt`);
 }
 
-export async function updateMovementAction(_prevState: { error?: string; success?: string }, formData: FormData) {
-  const user = await requireUser();
+export async function updateMovementAction(_prevState: ActionMessageState, formData: FormData): Promise<ActionMessageState> {
+  const user = await requirePackageOperator();
   const parsed = movementSchema.safeParse(Object.fromEntries(formData));
 
   if (!parsed.success) {
@@ -125,8 +141,8 @@ export async function updateMovementAction(_prevState: { error?: string; success
   return { success: "Movement updated." };
 }
 
-export async function deliverPackageAction(_prevState: { error?: string; success?: string }, formData: FormData) {
-  const user = await requireUser();
+export async function deliverPackageAction(_prevState: ActionMessageState, formData: FormData): Promise<ActionMessageState> {
+  const user = await requirePackageOperator();
   const parsed = deliverySchema.safeParse(Object.fromEntries(formData));
 
   if (!parsed.success) {

@@ -16,7 +16,7 @@ function SubmitButton() {
 }
 
 export function AuthForm() {
-  const [state, action] = React.useActionState(loginAction, {});
+  const [state, action] = React.useActionState(loginAction, { error: "" });
 
   return (
     <form action={action} className="space-y-4">

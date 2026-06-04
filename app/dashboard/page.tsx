@@ -2,16 +2,18 @@ import Link from "next/link";
 import { PackageStatus } from "@prisma/client";
 import { ArrowRight, Boxes, CheckCircle2, Clock, Truck } from "lucide-react";
 import { StatusBadge } from "@/components/status-badge";
+import { formatMoney } from "@/lib/money";
 import { prisma } from "@/lib/prisma";
-import { requireUser } from "@/lib/session";
+import { canOperatePackages, canViewReports, requireUser } from "@/lib/session";
 
 export default async function DashboardPage() {
   const user = await requireUser();
-  const [total, pending, inTransit, delivered, recent] = await Promise.all([
+  const [total, pending, inTransit, delivered, revenue, recent] = await Promise.all([
     prisma.package.count(),
     prisma.package.count({ where: { status: PackageStatus.PENDING } }),
     prisma.package.count({ where: { status: PackageStatus.IN_TRANSIT } }),
     prisma.package.count({ where: { status: PackageStatus.DELIVERED } }),
+    prisma.package.aggregate({ _sum: { price: true } }),
     prisma.package.findMany({
       take: 8,
       orderBy: { createdAt: "desc" },
@@ -29,10 +31,17 @@ export default async function DashboardPage() {
             {user.branch ? ` at ${user.branch.name}` : ""}
           </p>
         </div>
-        <Link href="/dashboard/packages/new" className="primary-button">
-          Register package
-          <ArrowRight size={18} />
-        </Link>
+        {canOperatePackages(user.role) ? (
+          <Link href="/dashboard/packages/new" className="primary-button">
+            Register package
+            <ArrowRight size={18} />
+          </Link>
+        ) : canViewReports(user.role) ? (
+          <Link href="/dashboard/reports" className="primary-button">
+            Open reports
+            <ArrowRight size={18} />
+          </Link>
+        ) : null}
       </div>
       <div className="stats-grid" style={{ margin: "1rem 0" }}>
         <div className="stat">
@@ -55,6 +64,11 @@ export default async function DashboardPage() {
           <strong>{delivered}</strong>
           <span>Delivered</span>
         </div>
+        <div className="stat">
+          <Boxes size={22} />
+          <strong>{formatMoney(revenue._sum.price ?? 0)}</strong>
+          <span>Total revenue</span>
+        </div>
       </div>
       <div className="table-wrap">
         <table>
@@ -63,6 +77,7 @@ export default async function DashboardPage() {
               <th>Tracking</th>
               <th>Route</th>
               <th>Receiver</th>
+              <th>Price</th>
               <th>Status</th>
               <th></th>
             </tr>
@@ -75,6 +90,7 @@ export default async function DashboardPage() {
                   {pkg.originBranch.code} to {pkg.destinationBranch.code}
                 </td>
                 <td>{pkg.receiverName}</td>
+                <td>{formatMoney(pkg.price)}</td>
                 <td>
                   <StatusBadge status={pkg.status} />
                 </td>

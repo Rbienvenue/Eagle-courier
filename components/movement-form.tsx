@@ -22,7 +22,7 @@ function SubmitButton() {
 }
 
 export function MovementForm({ packageId, branches, destinationBranchId }: { packageId: string; branches: Branch[]; destinationBranchId: string }) {
-  const [state, action] = React.useActionState(updateMovementAction, {});
+  const [state, action] = React.useActionState(updateMovementAction, { error: "", success: "" });
 
   return (
     <form action={action} className="panel space-y-4">

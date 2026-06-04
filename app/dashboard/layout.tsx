@@ -1,7 +1,7 @@
 import Link from "next/link";
-import { Boxes, Building2, LayoutDashboard, LogOut, PackagePlus } from "lucide-react";
+import { BarChart3, Boxes, Building2, LayoutDashboard, LogOut, PackagePlus } from "lucide-react";
 import { logoutAction } from "@/app/actions/auth";
-import { requireUser } from "@/lib/session";
+import { canManageSystem, canOperatePackages, canViewReports, requireUser } from "@/lib/session";
 import { Brand } from "@/components/brand";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -15,13 +15,22 @@ export default async function DashboardLayout({ children }: { children: React.Re
           <Link href="/dashboard">
             <LayoutDashboard size={17} /> Dashboard
           </Link>
-          <Link href="/dashboard/packages">
-            <Boxes size={17} /> Packages
-          </Link>
-          <Link href="/dashboard/packages/new">
-            <PackagePlus size={17} /> New
-          </Link>
-          {user.role === "ADMIN" ? (
+          {canOperatePackages(user.role) ? (
+            <>
+              <Link href="/dashboard/packages">
+                <Boxes size={17} /> Packages
+              </Link>
+              <Link href="/dashboard/packages/new">
+                <PackagePlus size={17} /> New
+              </Link>
+            </>
+          ) : null}
+          {canViewReports(user.role) ? (
+            <Link href="/dashboard/reports">
+              <BarChart3 size={17} /> Reports
+            </Link>
+          ) : null}
+          {canManageSystem(user.role) ? (
             <Link href="/dashboard/admin">
               <Building2 size={17} /> Admin
             </Link>

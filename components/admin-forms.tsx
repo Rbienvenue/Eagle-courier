@@ -31,7 +31,7 @@ function UserButton() {
 }
 
 export function BranchForm() {
-  const [state, action] = React.useActionState(createBranchAction, {});
+  const [state, action] = React.useActionState(createBranchAction, { error: "", success: "" });
   return (
     <form action={action} className="panel space-y-4">
       <h2>Add Branch</h2>
@@ -63,7 +63,7 @@ export function BranchForm() {
 }
 
 export function StaffForm({ branches }: { branches: Branch[] }) {
-  const [state, action] = React.useActionState(createUserAction, {});
+  const [state, action] = React.useActionState(createUserAction, { error: "", success: "" });
   return (
     <form action={action} className="panel space-y-4">
       <h2>Add Staff User</h2>
@@ -83,9 +83,10 @@ export function StaffForm({ branches }: { branches: Branch[] }) {
       </label>
       <label className="field">
         <span>Role</span>
-        <select name="role" defaultValue="STAFF">
-          <option value="STAFF">Staff</option>
-          <option value="ADMIN">Admin</option>
+        <select name="role" defaultValue="SERVICE_PROVIDER">
+          <option value="SERVICE_PROVIDER">Branch Service Provider</option>
+          <option value="ACCOUNTANT">Accountant</option>
+          <option value="SUPER_ADMIN">Super Admin</option>
         </select>
       </label>
       <label className="field">

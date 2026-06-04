@@ -4,11 +4,14 @@ import { Download } from "lucide-react";
 import { PrintButton } from "@/components/print-button";
 import { StatusBadge } from "@/components/status-badge";
 import { Brand } from "@/components/brand";
+import { formatMoney } from "@/lib/money";
 import { createQrDataUrl } from "@/lib/qr";
 import { prisma } from "@/lib/prisma";
+import { requirePackageOperator } from "@/lib/session";
 import { trackingUrl } from "@/lib/tracking";
 
 export default async function ReceiptPage({ params }: { params: Promise<{ id: string }> }) {
+  await requirePackageOperator();
   const { id } = await params;
   const pkg = await prisma.package.findUnique({
     where: { id },
@@ -78,6 +81,10 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
             <p style={{ color: "var(--muted)" }}>Package</p>
             <strong>{pkg.packageType}</strong>
             <p>{pkg.description}</p>
+          </div>
+          <div>
+            <p style={{ color: "var(--muted)" }}>Amount Paid</p>
+            <strong>{formatMoney(pkg.price)}</strong>
           </div>
         </div>
       </article>

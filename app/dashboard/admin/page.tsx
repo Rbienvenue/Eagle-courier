@@ -1,9 +1,9 @@
 import { BranchForm, StaffForm } from "@/components/admin-forms";
 import { prisma } from "@/lib/prisma";
-import { requireAdmin } from "@/lib/session";
+import { requireSuperAdmin } from "@/lib/session";
 
 export default async function AdminPage() {
-  await requireAdmin();
+  await requireSuperAdmin();
   const [branches, users] = await Promise.all([
     prisma.branch.findMany({ orderBy: { name: "asc" } }),
     prisma.user.findMany({ orderBy: { createdAt: "desc" }, include: { branch: true } })
