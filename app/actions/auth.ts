@@ -7,7 +7,7 @@ import { loginSchema } from "@/lib/validators";
 
 type LoginState = { error?: string };
 
-export async function loginAction(_prevState: LoginState, formData: FormData): Promise<LoginState> {
+export async function loginAction(formData: FormData): Promise<LoginState> {
   const parsed = loginSchema.safeParse(Object.fromEntries(formData));
 
   if (!parsed.success) {

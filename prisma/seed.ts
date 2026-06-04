@@ -4,6 +4,30 @@ import { PrismaClient, PackageStatus, MovementType, UserRole } from "@prisma/cli
 const prisma = new PrismaClient();
 
 async function main() {
+  // Ensure enum values exist (Postgres) to avoid enum value errors
+  await prisma.$executeRaw`ALTER TYPE "UserRole" ADD VALUE IF NOT EXISTS 'SERVICE_PROVIDER'`;
+  await prisma.$executeRaw`ALTER TYPE "UserRole" ADD VALUE IF NOT EXISTS 'ACCOUNTANT'`;
+  await prisma.$executeRaw`ALTER TYPE "UserRole" ADD VALUE IF NOT EXISTS 'SUPER_ADMIN'`;
+
+  await prisma.$executeRaw`ALTER TYPE "PackageStatus" ADD VALUE IF NOT EXISTS 'PENDING'`;
+  await prisma.$executeRaw`ALTER TYPE "PackageStatus" ADD VALUE IF NOT EXISTS 'IN_TRANSIT'`;
+  await prisma.$executeRaw`ALTER TYPE "PackageStatus" ADD VALUE IF NOT EXISTS 'ARRIVED'`;
+  await prisma.$executeRaw`ALTER TYPE "PackageStatus" ADD VALUE IF NOT EXISTS 'DELIVERED'`;
+  await prisma.$executeRaw`ALTER TYPE "PackageStatus" ADD VALUE IF NOT EXISTS 'CANCELLED'`;
+
+  await prisma.$executeRaw`ALTER TYPE "MovementType" ADD VALUE IF NOT EXISTS 'REGISTERED'`;
+  await prisma.$executeRaw`ALTER TYPE "MovementType" ADD VALUE IF NOT EXISTS 'DISPATCHED'`;
+  await prisma.$executeRaw`ALTER TYPE "MovementType" ADD VALUE IF NOT EXISTS 'ARRIVED'`;
+  await prisma.$executeRaw`ALTER TYPE "MovementType" ADD VALUE IF NOT EXISTS 'DELIVERED'`;
+  await prisma.$executeRaw`ALTER TYPE "MovementType" ADD VALUE IF NOT EXISTS 'CANCELLED'`;
+  await prisma.$executeRaw`ALTER TYPE "MovementType" ADD VALUE IF NOT EXISTS 'NOTE'`;
+
+  // Truncate tables to start with a clean state (Postgres)
+  await prisma.$executeRaw`TRUNCATE TABLE "Movement", "Package", "TrackingSequence", "User", "Branch" RESTART IDENTITY CASCADE`;
+
+  // Ensure `price` column exists on Package (added in migration)
+  await prisma.$executeRaw`ALTER TABLE "Package" ADD COLUMN IF NOT EXISTS "price" DECIMAL(12, 2) NOT NULL DEFAULT 0`;
+
   const branches = await Promise.all(
     [
       { name: "Kigali Branch", code: "KGL", city: "Kigali", address: "KN 4 Ave, Kigali", phone: "+250 788 100 100" },
