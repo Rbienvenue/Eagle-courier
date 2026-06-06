@@ -1,25 +1,35 @@
 "use client";
 
 import React, { useTransition } from "react";
+import { useRouter } from "next/navigation";
 import { LogIn } from "lucide-react";
-import { loginAction } from "@/app/actions/auth";
 
 export function AuthForm() {
   const [error, setError] = React.useState<string>("");
   const [isPending, startTransition] = useTransition();
   const formRef = React.useRef<HTMLFormElement>(null);
+  const router = useRouter();
 
   async function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setError("");
-    
+
     const formData = new FormData(e.currentTarget);
-    
+
     startTransition(async () => {
-      const result = await loginAction(formData);
-      if (result?.error) {
-        setError(result.error);
+      const response = await fetch("/api/login", {
+        method: "POST",
+        body: formData,
+      });
+
+      const result = await response.json();
+
+      if (!response.ok) {
+        setError(result.error ?? "Invalid email or password.");
+        return;
       }
+
+      router.push("/dashboard");
     });
   }
 

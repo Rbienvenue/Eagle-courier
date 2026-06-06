@@ -4,6 +4,7 @@ import React from "react";
 import { useFormStatus } from "react-dom";
 import { PackagePlus } from "lucide-react";
 import { createPackageAction } from "@/app/actions/packages";
+import { useActionStateFallback } from "@/lib/action-state";
 
 type Branch = {
   id: string;
@@ -54,7 +55,7 @@ function renderFieldError(fieldId: string, message?: string) {
 
 export function PackageForm({ branches, defaultOriginId }: { branches: Branch[]; defaultOriginId?: string | null }) {
   const [fieldErrors, setFieldErrors] = React.useState<FieldErrors>({});
-  const [state, action] = React.useActionState(createPackageAction, {
+  const [state, action] = useActionStateFallback(createPackageAction, {
     error: "",
     values: {},
     fieldErrors: {}

@@ -4,6 +4,7 @@ import React from "react";
 import { useFormStatus } from "react-dom";
 import { Building2, UserPlus } from "lucide-react";
 import { createBranchAction, createUserAction } from "@/app/actions/admin";
+import { useActionStateFallback } from "@/lib/action-state";
 
 type Branch = {
   id: string;
@@ -31,7 +32,7 @@ function UserButton() {
 }
 
 export function BranchForm() {
-  const [state, action] = React.useActionState(createBranchAction, { error: "", success: "" });
+  const [state, action] = useActionStateFallback(createBranchAction, { error: "", success: "" });
   return (
     <form action={action} className="panel space-y-4">
       <h2>Add Branch</h2>
@@ -63,7 +64,7 @@ export function BranchForm() {
 }
 
 export function StaffForm({ branches }: { branches: Branch[] }) {
-  const [state, action] = React.useActionState(createUserAction, { error: "", success: "" });
+  const [state, action] = useActionStateFallback(createUserAction, { error: "", success: "" });
   return (
     <form action={action} className="panel space-y-4">
       <h2>Add Staff User</h2>

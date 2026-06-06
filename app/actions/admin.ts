@@ -10,9 +10,21 @@ type ActionMessageState = {
   success?: string;
 };
 
-export async function createBranchAction(_prevState: ActionMessageState, formData: FormData): Promise<ActionMessageState> {
+function resolveFormData(prevStateOrFormData: ActionMessageState | FormData, formData?: FormData): FormData | undefined {
+  if (formData instanceof FormData) return formData;
+  if (prevStateOrFormData instanceof FormData) return prevStateOrFormData;
+  return undefined;
+}
+
+export async function createBranchAction(_prevState: ActionMessageState | FormData, formData?: FormData): Promise<ActionMessageState> {
   await requireSuperAdmin();
-  const parsed = branchSchema.safeParse(Object.fromEntries(formData));
+  const resolvedFormData = resolveFormData(_prevState, formData);
+
+  if (!resolvedFormData) {
+    return { error: "Enter valid branch details." };
+  }
+
+  const parsed = branchSchema.safeParse(Object.fromEntries(resolvedFormData));
 
   if (!parsed.success) {
     return { error: "Enter valid branch details." };
@@ -23,9 +35,15 @@ export async function createBranchAction(_prevState: ActionMessageState, formDat
   return { success: "Branch created." };
 }
 
-export async function createUserAction(_prevState: ActionMessageState, formData: FormData): Promise<ActionMessageState> {
+export async function createUserAction(_prevState: ActionMessageState | FormData, formData?: FormData): Promise<ActionMessageState> {
   await requireSuperAdmin();
-  const parsed = userSchema.safeParse(Object.fromEntries(formData));
+  const resolvedFormData = resolveFormData(_prevState, formData);
+
+  if (!resolvedFormData) {
+    return { error: "Enter valid staff details." };
+  }
+
+  const parsed = userSchema.safeParse(Object.fromEntries(resolvedFormData));
 
   if (!parsed.success) {
     return { error: "Enter valid staff details." };

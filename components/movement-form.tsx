@@ -5,6 +5,7 @@ import React from "react";
 import { useFormStatus } from "react-dom";
 import { Truck } from "lucide-react";
 import { updateMovementAction } from "@/app/actions/packages";
+import { useActionStateFallback } from "@/lib/action-state";
 
 type Branch = {
   id: string;
@@ -22,7 +23,7 @@ function SubmitButton() {
 }
 
 export function MovementForm({ packageId, branches, destinationBranchId }: { packageId: string; branches: Branch[]; destinationBranchId: string }) {
-  const [state, action] = React.useActionState(updateMovementAction, { error: "", success: "" });
+  const [state, action] = useActionStateFallback(updateMovementAction, { error: "", success: "" });
 
   return (
     <form action={action} className="panel space-y-4">

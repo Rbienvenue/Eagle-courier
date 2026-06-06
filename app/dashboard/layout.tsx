@@ -1,8 +1,8 @@
 import Link from "next/link";
 import { BarChart3, Boxes, Building2, LayoutDashboard, LogOut, PackagePlus } from "lucide-react";
-import { logoutAction } from "@/app/actions/auth";
 import { canManageSystem, canOperatePackages, canViewReports, requireUser } from "@/lib/session";
 import { Brand } from "@/components/brand";
+import { LogoutButton } from "@/components/logout-button";
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await requireUser();
@@ -35,11 +35,7 @@ export default async function DashboardLayout({ children }: { children: React.Re
               <Building2 size={17} /> Admin
             </Link>
           ) : null}
-          <form action={logoutAction}>
-            <button className="secondary-button" style={{ minHeight: 36, padding: "0.45rem 0.7rem" }}>
-              <LogOut size={16} /> Logout
-            </button>
-          </form>
+          <LogoutButton />
         </div>
       </nav>
       {children}

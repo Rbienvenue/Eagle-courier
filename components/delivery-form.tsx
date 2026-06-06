@@ -4,6 +4,7 @@ import React from "react";
 import { useFormStatus } from "react-dom";
 import { BadgeCheck } from "lucide-react";
 import { deliverPackageAction } from "@/app/actions/packages";
+import { useActionStateFallback } from "@/lib/action-state";
 
 function SubmitButton() {
   const { pending } = useFormStatus();
@@ -16,7 +17,7 @@ function SubmitButton() {
 }
 
 export function DeliveryForm({ packageId }: { packageId: string }) {
-  const [state, action] = React.useActionState(deliverPackageAction, { error: "", success: "" });
+  const [state, action] = useActionStateFallback(deliverPackageAction, { error: "", success: "" });
 
   return (
     <form action={action} className="panel space-y-4">
