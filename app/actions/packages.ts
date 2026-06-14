@@ -33,8 +33,21 @@ function movementTypeForStatus(status: PackageStatus) {
 
 export async function createPackageAction(_prevState: PackageFormState, formData: FormData): Promise<PackageFormState> {
   const user = await requirePackageOperator();
-  const submittedValues = formValues(formData);
-  const parsed = packageSchema.safeParse(Object.fromEntries(formData));
+  // resolve formData when action is invoked as a server action (single FormData)
+  function resolveFormData(prevStateOrFormData: PackageFormState | FormData, maybeFormData?: FormData): FormData | undefined {
+    if (maybeFormData instanceof FormData) return maybeFormData;
+    if (prevStateOrFormData instanceof FormData) return prevStateOrFormData;
+    return undefined;
+  }
+
+  const resolvedFormData = resolveFormData(_prevState, formData);
+
+  if (!resolvedFormData) {
+    return { error: "Invalid form submission." };
+  }
+
+  const submittedValues = formValues(resolvedFormData);
+  const parsed = packageSchema.safeParse(Object.fromEntries(resolvedFormData));
 
   if (!parsed.success) {
     const flattened = parsed.error.flatten();
@@ -90,7 +103,16 @@ export async function createPackageAction(_prevState: PackageFormState, formData
 
 export async function updateMovementAction(_prevState: ActionMessageState, formData: FormData): Promise<ActionMessageState> {
   const user = await requirePackageOperator();
-  const parsed = movementSchema.safeParse(Object.fromEntries(formData));
+  function resolveFormData(prevStateOrFormData: ActionMessageState | FormData, maybeFormData?: FormData): FormData | undefined {
+    if (maybeFormData instanceof FormData) return maybeFormData;
+    if (prevStateOrFormData instanceof FormData) return prevStateOrFormData;
+    return undefined;
+  }
+
+  const resolvedFormData = resolveFormData(_prevState, formData);
+  if (!resolvedFormData) return { error: "Choose a valid status and branch." };
+
+  const parsed = movementSchema.safeParse(Object.fromEntries(resolvedFormData));
 
   if (!parsed.success) {
     return { error: "Choose a valid status and branch." };
@@ -143,7 +165,16 @@ export async function updateMovementAction(_prevState: ActionMessageState, formD
 
 export async function deliverPackageAction(_prevState: ActionMessageState, formData: FormData): Promise<ActionMessageState> {
   const user = await requirePackageOperator();
-  const parsed = deliverySchema.safeParse(Object.fromEntries(formData));
+  function resolveFormData(prevStateOrFormData: ActionMessageState | FormData, maybeFormData?: FormData): FormData | undefined {
+    if (maybeFormData instanceof FormData) return maybeFormData;
+    if (prevStateOrFormData instanceof FormData) return prevStateOrFormData;
+    return undefined;
+  }
+
+  const resolvedFormData = resolveFormData(_prevState, formData);
+  if (!resolvedFormData) return { error: "Enter the receiver national ID." };
+
+  const parsed = deliverySchema.safeParse(Object.fromEntries(resolvedFormData));
 
   if (!parsed.success) {
     return { error: "Enter the receiver national ID." };

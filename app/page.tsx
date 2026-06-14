@@ -46,7 +46,7 @@ export default function HomePage() {
           <form className="track-form" action="/track">
             <label className="field">
               <span>Tracking code</span>
-              <input name="code" placeholder="EAG-KGL-2026-000245" required />
+              <input name="code" placeholder="Tracking code or phone number" required />
             </label>
             <button className="primary-button">
               Track package

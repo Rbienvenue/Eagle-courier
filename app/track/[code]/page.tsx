@@ -9,8 +9,21 @@ import { prisma } from "@/lib/prisma";
 
 export default async function PublicTrackingPage({ params }: { params: Promise<{ code: string }> }) {
   const { code } = await params;
-  const pkg = await prisma.package.findUnique({
-    where: { trackingCode: decodeURIComponent(code) },
+  const query = decodeURIComponent(code).trim();
+  const normalizedPhone = query.replace(/\D/g, "");
+  const searchConditions = [
+    { trackingCode: { equals: query, mode: "insensitive" } }
+  ];
+  if (normalizedPhone.length >= 8) {
+    searchConditions.push(
+      { senderPhone: { contains: normalizedPhone } },
+      { receiverPhone: { contains: normalizedPhone } }
+    );
+  }
+
+  const pkg = await prisma.package.findFirst({
+    where: { OR: searchConditions },
+    orderBy: { createdAt: "desc" },
     include: {
       originBranch: true,
       destinationBranch: true,
