@@ -145,7 +145,9 @@ export default async function ReportsPage({
               <th>Date</th>
               <th>Branch</th>
               <th>Route</th>
+              <th>Sender</th>
               <th>Receiver</th>
+              <th>Staff</th>
               <th>Status</th>
               <th>Price</th>
             </tr>
@@ -159,14 +161,16 @@ export default async function ReportsPage({
                 <td>
                   {pkg.originBranch.code} to {pkg.destinationBranch.code}
                 </td>
+                <td>{pkg.senderName}</td>
                 <td>{pkg.receiverName}</td>
+                <td>{pkg.createdBy?.name ?? "Unknown"}</td>
                 <td>{pkg.status}</td>
                 <td>{formatMoney(pkg.price)}</td>
               </tr>
             ))}
             {packages.length === 0 ? (
               <tr>
-                <td colSpan={7}>No transactions found for this report.</td>
+                <td colSpan={9}>No transactions found for this report.</td>
               </tr>
             ) : null}
           </tbody>

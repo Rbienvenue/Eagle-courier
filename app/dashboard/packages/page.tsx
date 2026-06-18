@@ -4,10 +4,11 @@ import { SearchBox } from "@/components/search-box";
 import { StatusBadge } from "@/components/status-badge";
 import { formatMoney } from "@/lib/money";
 import { prisma } from "@/lib/prisma";
-import { requirePackageOperator } from "@/lib/session";
+import { canOperatePackages, requirePackageViewer } from "@/lib/session";
+import NewPackageButton from "@/components/new-package-button";
 
 export default async function PackagesPage({ searchParams }: { searchParams: Promise<{ q?: string }> }) {
-  await requirePackageOperator();
+  const user = await requirePackageViewer();
   const { q } = await searchParams;
   const query = q?.trim();
   const where: Prisma.PackageWhereInput | undefined = query
@@ -24,9 +25,22 @@ export default async function PackagesPage({ searchParams }: { searchParams: Pro
   const packages = await prisma.package.findMany({
     where,
     orderBy: { createdAt: "desc" },
-    include: { originBranch: true, destinationBranch: true },
+    select: {
+      id: true,
+      trackingCode: true,
+      senderName: true,
+      receiverName: true,
+      price: true,
+      status: true,
+      originBranch: { select: { code: true } },
+      destinationBranch: { select: { code: true } }
+    },
     take: 50
   });
+
+  const canEdit = canOperatePackages(user.role);
+
+  const branches = await prisma.branch.findMany({ where: { isActive: true }, orderBy: { name: 'asc' }, select: { id: true, name: true, code: true } });
 
   return (
     <section className="page">
@@ -35,9 +49,9 @@ export default async function PackagesPage({ searchParams }: { searchParams: Pro
           <h1>Packages</h1>
           <p style={{ color: "var(--muted)" }}>Search and manage registered packages.</p>
         </div>
-        <Link href="/dashboard/packages/new" className="primary-button">
-          New package
-        </Link>
+        {canEdit ? (
+          <NewPackageButton branches={branches} defaultOriginId={user.branchId} />
+        ) : null}
       </div>
       <div style={{ margin: "1rem 0" }}>
         <SearchBox />
@@ -52,7 +66,7 @@ export default async function PackagesPage({ searchParams }: { searchParams: Pro
               <th>Route</th>
               <th>Price</th>
               <th>Status</th>
-              <th></th>
+              {canEdit ? <th></th> : null}
             </tr>
           </thead>
           <tbody>
@@ -68,14 +82,16 @@ export default async function PackagesPage({ searchParams }: { searchParams: Pro
                 <td>
                   <StatusBadge status={pkg.status} />
                 </td>
-                <td>
-                  <Link href={`/dashboard/packages/${pkg.id}`}>Open</Link>
-                </td>
+                {canEdit ? (
+                  <td>
+                    <Link href={`/dashboard/packages/${pkg.id}`}>Open</Link>
+                  </td>
+                ) : null}
               </tr>
             ))}
             {packages.length === 0 ? (
               <tr>
-                <td colSpan={7}>No packages found.</td>
+                <td colSpan={canEdit ? 7 : 6}>No packages found.</td>
               </tr>
             ) : null}
           </tbody>

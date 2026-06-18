@@ -40,7 +40,17 @@ export async function getCurrentUser() {
 
   return prisma.user.findUnique({
     where: { id: userId },
-    include: { branch: true }
+    select: {
+      id: true,
+      name: true,
+      role: true,
+      branchId: true,
+      branch: {
+        select: {
+          name: true
+        }
+      }
+    }
   });
 }
 
@@ -69,7 +79,11 @@ export async function requireSuperAdmin() {
 }
 
 export async function requirePackageOperator() {
-  return requireRole([UserRole.SERVICE_PROVIDER, UserRole.SUPER_ADMIN]);
+  return requireRole([UserRole.SERVICE_PROVIDER]);
+}
+
+export async function requirePackageViewer() {
+  return requireRole([UserRole.SERVICE_PROVIDER, UserRole.ACCOUNTANT, UserRole.SUPER_ADMIN]);
 }
 
 export async function requireReportsAccess() {
@@ -77,7 +91,11 @@ export async function requireReportsAccess() {
 }
 
 export function canOperatePackages(role: UserRole) {
-  return role === UserRole.SERVICE_PROVIDER || role === UserRole.SUPER_ADMIN;
+  return role === UserRole.SERVICE_PROVIDER;
+}
+
+export function canViewPackages(role: UserRole) {
+  return role === UserRole.SERVICE_PROVIDER || role === UserRole.ACCOUNTANT || role === UserRole.SUPER_ADMIN;
 }
 
 export function canViewReports(role: UserRole) {

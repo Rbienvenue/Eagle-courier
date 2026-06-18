@@ -19,7 +19,7 @@ export async function GET(request: NextRequest) {
   });
 
   const rows = [
-    ["Tracking Code", "Date", "Origin Branch", "Destination Branch", "Sender", "Receiver", "Status", "Price", "Created By"],
+    ["Tracking Code", "Date", "Origin Branch", "Destination Branch", "Sender", "Receiver", "Staff", "Status", "Price"],
     ...packages.map((pkg) => [
       pkg.trackingCode,
       pkg.createdAt.toISOString(),
@@ -27,9 +27,9 @@ export async function GET(request: NextRequest) {
       pkg.destinationBranch.name,
       pkg.senderName,
       pkg.receiverName,
+      pkg.createdBy?.name ?? "Unknown",
       pkg.status,
-      pkg.price.toString(),
-      pkg.createdBy.name
+      pkg.price.toString()
     ])
   ];
 

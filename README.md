@@ -1,3 +1,28 @@
+# Eagle Courier
+
+## UI update (Tailwind + shadcn)
+
+This project has been updated with a modern dashboard layout and new reusable UI components.
+
+To enable Tailwind and shadcn locally, run:
+
+```bash
+# install Tailwind and supporting packages
+npm install -D tailwindcss postcss autoprefixer
+npx tailwindcss init -p
+
+# optional: install shadcn/ui and Radix if you want the full component kit
+# npm install @radix-ui/react-icons @radix-ui/react-dropdown-menu
+```
+
+After installing, run the development server:
+
+```bash
+npm run dev
+```
+
+The new components live in `components/` and the dashboard layout is in `app/dashboard/layout.tsx`.
+
 # Eagle Courier Management
 
 Branch-based courier and cargo management system built with Next.js, Prisma ORM, and PostgreSQL.

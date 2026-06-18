@@ -32,6 +32,7 @@ export async function createBranchAction(_prevState: ActionMessageState | FormDa
 
   await prisma.branch.create({ data: parsed.data });
   revalidatePath("/dashboard/admin");
+  revalidatePath("/dashboard/branches");
   return { success: "Branch created." };
 }
 
@@ -60,5 +61,6 @@ export async function createUserAction(_prevState: ActionMessageState | FormData
   });
 
   revalidatePath("/dashboard/admin");
+  revalidatePath("/dashboard/users");
   return { success: "Staff user created." };
 }

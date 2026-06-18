@@ -9,10 +9,10 @@ import { Timeline } from "@/components/timeline";
 import { formatMoney } from "@/lib/money";
 import { maskNationalId } from "@/lib/privacy";
 import { prisma } from "@/lib/prisma";
-import { requirePackageOperator } from "@/lib/session";
+import { canOperatePackages, requirePackageViewer } from "@/lib/session";
 
 export default async function PackageDetailPage({ params }: { params: Promise<{ id: string }> }) {
-  await requirePackageOperator();
+  const user = await requirePackageViewer();
   const { id } = await params;
   const [pkg, branches] = await Promise.all([
     prisma.package.findUnique({
@@ -20,6 +20,7 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
       include: {
         originBranch: true,
         destinationBranch: true,
+        createdBy: true,
         movements: { orderBy: { createdAt: "asc" }, include: { branch: true } }
       }
     }),
@@ -29,6 +30,8 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
   if (!pkg) {
     notFound();
   }
+
+  const canEdit = canOperatePackages(user.role);
 
   return (
     <section className="page">
@@ -66,6 +69,11 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
               <p style={{ color: "var(--muted)" }}>Destination</p>
               <strong>{pkg.destinationBranch.name}</strong>
             </div>
+            <div>
+              <p style={{ color: "var(--muted)" }}>Registered by</p>
+              <strong>{pkg.createdBy?.name ?? "Unknown"}</strong>
+              <p style={{ color: "var(--muted)" }}>Role: {pkg.createdBy?.role ?? "—"}</p>
+            </div>
             <div className="wide">
               <p style={{ color: "var(--muted)" }}>Package</p>
               <strong>{pkg.packageType}</strong>
@@ -80,15 +88,22 @@ export default async function PackageDetailPage({ params }: { params: Promise<{ 
           </div>
         </div>
         <aside className="space-y-4" style={{ display: "grid", gap: "1rem" }}>
-          {pkg.status !== PackageStatus.DELIVERED ? (
-            <>
-              <MovementForm packageId={pkg.id} branches={branches} destinationBranchId={pkg.destinationBranchId} />
-              <DeliveryForm packageId={pkg.id} />
-            </>
+          {canEdit ? (
+            pkg.status !== PackageStatus.DELIVERED ? (
+              <>
+                <MovementForm packageId={pkg.id} branches={branches} destinationBranchId={pkg.destinationBranchId} />
+                <DeliveryForm packageId={pkg.id} />
+              </>
+            ) : (
+              <div className="panel">
+                <h2>Delivered</h2>
+                <p style={{ color: "var(--muted)" }}>This package has been released to the verified receiver.</p>
+              </div>
+            )
           ) : (
             <div className="panel">
-              <h2>Delivered</h2>
-              <p style={{ color: "var(--muted)" }}>This package has been released to the verified receiver.</p>
+              <h2>View-only</h2>
+              <p style={{ color: "var(--muted)" }}>You can view package details here, but only service staff can update movements or delivery status.</p>
             </div>
           )}
         </aside>

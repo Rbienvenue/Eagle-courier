@@ -5,6 +5,8 @@ import { StatusBadge } from "@/components/status-badge";
 import { formatMoney } from "@/lib/money";
 import { prisma } from "@/lib/prisma";
 import { canOperatePackages, canViewReports, requireUser } from "@/lib/session";
+import { Card } from "@/components/card";
+import { Table } from "@/components/table";
 
 export default async function DashboardPage() {
   const user = await requireUser();
@@ -22,13 +24,13 @@ export default async function DashboardPage() {
   ]);
 
   return (
-    <section className="page">
-      <div style={{ display: "flex", justifyContent: "space-between", gap: "1rem", alignItems: "center" }}>
+    <section>
+      <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
         <div>
           <h1>Dashboard</h1>
-          <p style={{ color: "var(--muted)" }}>
+          <p style={{ color: 'var(--muted)' }}>
             Signed in as {user.name}
-            {user.branch ? ` at ${user.branch.name}` : ""}
+            {user.branch ? ` at ${user.branch.name}` : ''}
           </p>
         </div>
         {canOperatePackages(user.role) ? (
@@ -43,64 +45,84 @@ export default async function DashboardPage() {
           </Link>
         ) : null}
       </div>
-      <div className="stats-grid" style={{ margin: "1rem 0" }}>
-        <div className="stat">
-          <Boxes size={22} />
-          <strong>{total}</strong>
-          <span>Total packages</span>
-        </div>
-        <div className="stat">
-          <Clock size={22} />
-          <strong>{pending}</strong>
-          <span>Pending</span>
-        </div>
-        <div className="stat">
-          <Truck size={22} />
-          <strong>{inTransit}</strong>
-          <span>In transit</span>
-        </div>
-        <div className="stat">
-          <CheckCircle2 size={22} />
-          <strong>{delivered}</strong>
-          <span>Delivered</span>
-        </div>
-        <div className="stat">
-          <Boxes size={22} />
-          <strong>{formatMoney(revenue._sum.price ?? 0)}</strong>
-          <span>Total revenue</span>
-        </div>
+
+      <div style={{ display: 'grid', gridTemplateColumns: 'repeat(4, 1fr)', gap: 12, marginTop: 12 }}>
+        <Card className="">
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Boxes />
+            <div>
+              <div style={{ fontSize: 20, fontWeight: 700 }}>{total}</div>
+              <div style={{ color: 'var(--muted)' }}>Total packages</div>
+            </div>
+          </div>
+        </Card>
+        <Card>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Clock />
+            <div>
+              <div style={{ fontSize: 20, fontWeight: 700 }}>{pending}</div>
+              <div style={{ color: 'var(--muted)' }}>Pending</div>
+            </div>
+          </div>
+        </Card>
+        <Card>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <Truck />
+            <div>
+              <div style={{ fontSize: 20, fontWeight: 700 }}>{inTransit}</div>
+              <div style={{ color: 'var(--muted)' }}>In transit</div>
+            </div>
+          </div>
+        </Card>
+        <Card>
+          <div style={{ display: 'flex', alignItems: 'center', gap: 10 }}>
+            <CheckCircle2 />
+            <div>
+              <div style={{ fontSize: 20, fontWeight: 700 }}>{delivered}</div>
+              <div style={{ color: 'var(--muted)' }}>Delivered</div>
+            </div>
+          </div>
+        </Card>
       </div>
-      <div className="table-wrap">
-        <table>
-          <thead>
-            <tr>
-              <th>Tracking</th>
-              <th>Route</th>
-              <th>Receiver</th>
-              <th>Price</th>
-              <th>Status</th>
-              <th></th>
-            </tr>
-          </thead>
-          <tbody>
-            {recent.map((pkg) => (
-              <tr key={pkg.id}>
-                <td>{pkg.trackingCode}</td>
-                <td>
-                  {pkg.originBranch.code} to {pkg.destinationBranch.code}
-                </td>
-                <td>{pkg.receiverName}</td>
-                <td>{formatMoney(pkg.price)}</td>
-                <td>
-                  <StatusBadge status={pkg.status} />
-                </td>
-                <td>
-                  <Link href={`/dashboard/packages/${pkg.id}`}>Open</Link>
-                </td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
+
+      <div style={{ marginTop: 14 }}>
+        <Card>
+          <h3 style={{ marginTop: 0 }}>Recent packages</h3>
+          <Table>
+            <table>
+              <thead>
+                <tr>
+                  <th>Tracking</th>
+                  <th>Route</th>
+                  <th>Receiver</th>
+                  <th>Price</th>
+                  <th>Status</th>
+                  {canOperatePackages(user.role) ? <th /> : null}
+                </tr>
+              </thead>
+              <tbody>
+                {recent.map((pkg) => (
+                  <tr key={pkg.id}>
+                    <td>{pkg.trackingCode}</td>
+                    <td>
+                      {pkg.originBranch.code} to {pkg.destinationBranch.code}
+                    </td>
+                    <td>{pkg.receiverName}</td>
+                    <td>{formatMoney(pkg.price)}</td>
+                    <td>
+                      <StatusBadge status={pkg.status} />
+                    </td>
+                    {canOperatePackages(user.role) ? (
+                      <td>
+                        <Link href={`/dashboard/packages/${pkg.id}`}>Open</Link>
+                      </td>
+                    ) : null}
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </Table>
+        </Card>
       </div>
     </section>
   );

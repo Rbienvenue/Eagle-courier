@@ -7,15 +7,15 @@ import { Brand } from "@/components/brand";
 import { formatMoney } from "@/lib/money";
 import { createQrDataUrl } from "@/lib/qr";
 import { prisma } from "@/lib/prisma";
-import { requirePackageOperator } from "@/lib/session";
+import { requirePackageViewer } from "@/lib/session";
 import { trackingUrl } from "@/lib/tracking";
 
 export default async function ReceiptPage({ params }: { params: Promise<{ id: string }> }) {
-  await requirePackageOperator();
+  await requirePackageViewer();
   const { id } = await params;
   const pkg = await prisma.package.findUnique({
     where: { id },
-    include: { originBranch: true, destinationBranch: true }
+    include: { originBranch: true, destinationBranch: true, createdBy: true }
   });
 
   if (!pkg) {
@@ -76,6 +76,11 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
             <p style={{ color: "var(--muted)" }}>Destination Branch</p>
             <strong>{pkg.destinationBranch.name}</strong>
             <p>{pkg.destinationBranch.city}</p>
+          </div>
+          <div>
+            <p style={{ color: "var(--muted)" }}>Registered by</p>
+            <strong>{pkg.createdBy?.name ?? "Unknown"}</strong>
+            <p style={{ color: "var(--muted)" }}>Role: {pkg.createdBy?.role ?? "—"}</p>
           </div>
           <div className="wide">
             <p style={{ color: "var(--muted)" }}>Package</p>

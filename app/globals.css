@@ -1,3 +1,7 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
 :root {
   --background: #e9f5ff;
   --foreground: #0d2f65;
@@ -399,6 +403,76 @@ button:disabled {
   grid-template-columns: repeat(2, minmax(0, 1fr));
 }
 
+/* New layout helpers for modern dashboard */
+.app-shell {
+  display: flex;
+  min-height: 100vh;
+  background: var(--background);
+}
+
+.sidebar {
+  width: 260px;
+  position: fixed;
+  top: 0;
+  left: 0;
+  bottom: 0;
+  height: 100vh;
+  background: var(--surface);
+  border-right: 1px solid var(--line);
+  padding: 1.25rem;
+  overflow: auto;
+  z-index: 1000;
+}
+
+.sidebar {
+  display: flex;
+  flex-direction: column;
+}
+
+.sidebar nav {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  flex: 1 1 auto;
+  overflow: auto;
+}
+
+.sidebar-footer {
+  margin-top: 12px;
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+  display: flex;
+  gap: 10px;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.role-badge .role-label {
+  font-weight: 700;
+  color: var(--muted);
+  font-size: 0.92rem;
+}
+
+.main-content {
+  flex: 1;
+  margin-left: 260px;
+  padding: 1.25rem 2rem;
+}
+
+.card {
+  border: 1px solid var(--line);
+  background: var(--surface);
+  border-radius: 12px;
+  padding: 1rem;
+}
+
+.table-wrap {
+  overflow: auto;
+  border-radius: 8px;
+  border: 1px solid var(--line);
+  background: var(--surface);
+}
+
 .form-grid {
   grid-template-columns: repeat(3, minmax(0, 1fr));
 }
@@ -561,6 +635,20 @@ th {
   .stats-grid,
   .form-grid {
     grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  /* Make sidebar participate in the normal flow on smaller screens */
+  .sidebar {
+    position: static;
+    width: 100%;
+    height: auto;
+    border-right: 0;
+    padding: 0.85rem 1rem;
+  }
+
+  .main-content {
+    margin-left: 0;
+    padding: 1rem;
   }
 }
 
