@@ -2,42 +2,51 @@
 
 import React from "react";
 
+type Theme = "light" | "dark";
+
+const ThemeContext = React.createContext<{ theme: Theme | null; toggle: () => void }>({
+  theme: null,
+  toggle: () => {}
+});
+
+export function useTheme() {
+  return React.useContext(ThemeContext);
+}
+
+function applyTheme(theme: Theme) {
+  document.documentElement.setAttribute("data-theme", theme);
+}
+
 export default function ThemeProvider({ children }: { children: React.ReactNode }) {
-  const [theme, setTheme] = React.useState<string | null>(null);
+  const [theme, setTheme] = React.useState<Theme | null>(null);
 
   React.useEffect(() => {
     try {
       const stored = localStorage.getItem("theme");
       if (stored === "light" || stored === "dark") {
         setTheme(stored);
-        document.documentElement.setAttribute("data-theme", stored === "dark" ? "dark" : "light");
+        applyTheme(stored);
         return;
       }
-
-      const prefersDark = window.matchMedia && window.matchMedia("(prefers-color-scheme: dark)").matches;
-      const initial = prefersDark ? "dark" : "light";
+      const prefersDark = window.matchMedia?.("(prefers-color-scheme: dark)").matches;
+      const initial: Theme = prefersDark ? "dark" : "light";
       setTheme(initial);
-      document.documentElement.setAttribute("data-theme", initial === "dark" ? "dark" : "light");
-    } catch (e) {
-      // ignore
+      applyTheme(initial);
+    } catch {
+      // localStorage unavailable — keep light default
     }
   }, []);
 
-  const toggle = () => {
-    const next = theme === "dark" ? "light" : "dark";
+  const toggle = React.useCallback(() => {
+    const next: Theme = theme === "dark" ? "light" : "dark";
+    setTheme(next);
     try {
       localStorage.setItem("theme", next);
-    } catch (e) {}
-    setTheme(next);
-    document.documentElement.setAttribute("data-theme", next === "dark" ? "dark" : "light");
-  };
+    } catch {
+      // ignore
+    }
+    applyTheme(next);
+  }, [theme]);
 
-  return (
-    <>
-      {children}
-      <button aria-label="Toggle theme" className="theme-toggle" onClick={toggle}>
-        {theme === "dark" ? "🌙" : "☀️"}
-      </button>
-    </>
-  );
+  return <ThemeContext.Provider value={{ theme, toggle }}>{children}</ThemeContext.Provider>;
 }

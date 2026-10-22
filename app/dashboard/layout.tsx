@@ -1,17 +1,28 @@
 import { canManageSystem, canOperatePackages, canViewPackages, canViewReports, requireUser } from "@/lib/session";
-import Sidebar from "@/components/sidebar";
+import DashboardChrome from "@/components/dashboard-chrome";
+
+const ROLE_LABELS: Record<string, string> = {
+  SUPER_ADMIN: "Admin",
+  SERVICE_PROVIDER: "Service Provider",
+  ACCOUNTANT: "Accountant"
+};
 
 export default async function DashboardLayout({ children }: { children: React.ReactNode }) {
   const user = await requireUser();
 
   return (
-    <div className="app-shell">
-      <Sidebar userRole={user.role} />
-      <div className="main-content">
-        <header style={{ display: 'flex', alignItems: 'center', justifyContent: 'flex-end', gap: 12 }}>
-        </header>
-        <main style={{ marginTop: 12 }}>{children}</main>
-      </div>
-    </div>
+    <DashboardChrome
+      userName={user.name}
+      userRoleLabel={ROLE_LABELS[user.role] ?? user.role}
+      branchName={user.branch?.name}
+      flags={{
+        packages: canViewPackages(user.role),
+        newPackage: canOperatePackages(user.role),
+        reports: canViewReports(user.role),
+        admin: canManageSystem(user.role)
+      }}
+    >
+      {children}
+    </DashboardChrome>
   );
 }

@@ -10,7 +10,7 @@ interface BrandProps {
 export function Brand({ href = "/", title = "Eagle Courier", caption }: BrandProps) {
   return (
     <Link href={href} className="brand">
-      <Image src="/logo.svg" alt="Eagle Courier logo" width={48} height={48} className="brand-logo" />
+      <Image src="/logo-mark.svg" alt="Eagle Courier logo" width={48} height={48} className="brand-logo" />
       <div>
         <span className="brand-name">{title}</span>
         {caption ? <span className="brand-caption">{caption}</span> : null}

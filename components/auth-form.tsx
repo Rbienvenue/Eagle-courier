@@ -22,10 +22,15 @@ export function AuthForm() {
         body: formData,
       });
 
-      const result = await response.json();
+      let result: { error?: string } = {};
+      try {
+        result = await response.json();
+      } catch {
+        // Non-JSON response (e.g. server error page) — fall back to generic message
+      }
 
       if (!response.ok) {
-        setError(result.error ?? "Invalid email or password.");
+        setError(result.error ?? "Invalid email or password. Please try again.");
         return;
       }
 
@@ -38,11 +43,11 @@ export function AuthForm() {
       {error ? <p className="form-error">{error}</p> : null}
       <label className="field">
         <span>Email</span>
-        <input name="email" type="email" defaultValue="admin@eaglecourier.rw" required />
+        <input name="email" type="email" placeholder="you@eaglecourier.rw" autoComplete="username" required />
       </label>
       <label className="field">
         <span>Password</span>
-        <input name="password" type="password" defaultValue="password123" required />
+        <input name="password" type="password" placeholder="Your password" autoComplete="current-password" required />
       </label>
       <button className="primary-button w-full" disabled={isPending} type="submit">
         <LogIn size={18} />

@@ -1,7 +1,7 @@
 import { notFound } from "next/navigation";
-import Link from "next/link";
-import { ArrowLeft, PackageSearch } from "lucide-react";
-import { Brand } from "@/components/brand";
+import { PackageSearch } from "lucide-react";
+import { SiteHeader } from "@/components/site-header";
+import { SiteFooter } from "@/components/site-footer";
 import { StatusBadge } from "@/components/status-badge";
 import { Timeline } from "@/components/timeline";
 import { initialsName, maskPhone } from "@/lib/privacy";
@@ -9,7 +9,14 @@ import { prisma } from "@/lib/prisma";
 
 export default async function PublicTrackingPage({ params }: { params: Promise<{ code: string }> }) {
   const { code } = await params;
-  const query = decodeURIComponent(code).trim();
+
+  let query = "";
+  try {
+    query = decodeURIComponent(code).trim();
+  } catch {
+    notFound();
+  }
+
   const normalizedPhone = query.replace(/\D/g, "");
   const searchConditions = [
     { trackingCode: { equals: query, mode: "insensitive" } }
@@ -40,45 +47,52 @@ export default async function PublicTrackingPage({ params }: { params: Promise<{
 
   return (
     <main className="site-shell">
-      <nav className="public-nav">
-        <Brand href="/" />
-        <Link href="/" className="nav-links">
-          <ArrowLeft size={17} />
-          Track another
-        </Link>
-      </nav>
+      <SiteHeader />
+
       <section className="page">
-        <div className="panel" style={{ marginBottom: "1rem" }}>
-          <div className="receipt-header">
+        <div className="track-summary">
+          <div className="track-summary-head">
             <div>
-              <PackageSearch size={30} />
-              <h1 style={{ marginBottom: "0.4rem" }}>{pkg.trackingCode}</h1>
+              <span className="code-icon">
+                <PackageSearch size={26} />
+              </span>
+              <h1>{pkg.trackingCode}</h1>
               <StatusBadge status={pkg.status} />
             </div>
-            <div style={{ textAlign: "right", color: "var(--muted)" }}>
-              <strong style={{ color: "var(--foreground)" }}>
-                {pkg.originBranch.city} to {pkg.destinationBranch.city}
+            <div className="track-route">
+              <strong>
+                {pkg.originBranch.city} → {pkg.destinationBranch.city}
               </strong>
-              <p style={{ margin: "0.35rem 0 0" }}>
+              <span>
                 {pkg.packageType} • {pkg.description}
-              </p>
+              </span>
             </div>
           </div>
-          <div className="detail-grid" style={{ marginTop: "1rem" }}>
-            <div>
-              <p style={{ color: "var(--muted)", marginBottom: "0.3rem" }}>Sender</p>
+
+          <div className="track-parties">
+            <div className="track-party">
+              <p className="label">Sender</p>
               <strong>{initialsName(pkg.senderName)}</strong>
-              <p style={{ color: "var(--muted)", marginTop: "0.3rem" }}>{maskPhone(pkg.senderPhone)}</p>
+              <p>{maskPhone(pkg.senderPhone)}</p>
             </div>
-            <div>
-              <p style={{ color: "var(--muted)", marginBottom: "0.3rem" }}>Receiver</p>
+            <div className="track-party">
+              <p className="label">Receiver</p>
               <strong>{initialsName(pkg.receiverName)}</strong>
-              <p style={{ color: "var(--muted)", marginTop: "0.3rem" }}>{maskPhone(pkg.receiverPhone)}</p>
+              <p>{maskPhone(pkg.receiverPhone)}</p>
             </div>
           </div>
         </div>
-        <Timeline items={pkg.movements} />
+
+        <div style={{ marginTop: "1.5rem" }}>
+          <h2 style={{ margin: "0 0 0.3rem", fontSize: "1.15rem" }}>Journey</h2>
+          <p className="muted" style={{ margin: 0, fontSize: "0.92rem" }}>
+            Every scan from drop-off to delivery.
+          </p>
+          <Timeline items={pkg.movements} />
+        </div>
       </section>
+
+      <SiteFooter />
     </main>
   );
 }
