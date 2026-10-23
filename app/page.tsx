@@ -45,7 +45,7 @@ const STEPS = [
   {
     title: "Verified handover",
     body:
-      "The receiver shows their national ID at the destination branch — matched against the record — before the parcel is released."
+      "The receiver shows their national ID at the destination branch matched against the record before the parcel is released."
   }
 ];
 
@@ -100,7 +100,7 @@ export default function HomePage() {
         <div className="container">
           <div className="section-head">
             <p className="kicker">What we move</p>
-            <h2>Parcels, cargo, and city delivery — with one tracking code</h2>
+            <h2>Parcels, cargo, and city delivery with one tracking code</h2>
             <p>
               Everything is registered at the branch, priced up front, and traceable from drop-off
               to handover.
@@ -171,7 +171,7 @@ export default function HomePage() {
             <h2>Close to home, wherever home is</h2>
             <p>
               Our branches sit at the main transport hubs, so your parcel rides the routes that
-              already run every day. Walk in, register, and we handle the rest — across the
+              already run every day. Walk in, register, and we handle the rest across the
               country.
             </p>
             <ul className="branch-pills">
@@ -215,7 +215,7 @@ export default function HomePage() {
                 <p>
                   Bring the original national ID matching the receiver details registered at
                   drop-off. Our staff verify the ID against the record before releasing any
-                  parcel — this protects senders and receivers alike.
+                  parcel this protects senders and receivers alike.
                 </p>
               </div>
             </details>
@@ -249,7 +249,7 @@ export default function HomePage() {
           <div>
             <h2>Ready to send something?</h2>
             <p>
-              Walk into any branch to register your parcel — or track one already on its way.
+              Walk into any branch to register your parcel or track one already on its way.
             </p>
           </div>
           <div className="cta-actions">

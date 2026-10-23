@@ -15,7 +15,7 @@ export function SiteFooter() {
               </div>
             </Link>
             <p>
-              Fast, tracked parcel and cargo delivery between Kigali and every province of Rwanda —
+              Fast, tracked parcel and cargo delivery between Kigali and every province of Rwanda
               with branch-to-branch visibility and ID-verified handover.
             </p>
           </div>
@@ -35,14 +35,18 @@ export function SiteFooter() {
             <h4>Contact</h4>
             <ul>
               <li>
-                <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
-                  <Phone size={15} /> +250 788 000 000
-                </span>
+                <a href="tel:+250788000000">
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
+                    <Phone size={15} /> +250 788 000 000
+                  </span>
+                </a>
               </li>
               <li>
-                <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
-                  <Mail size={15} /> info@eaglecourier.rw
-                </span>
+                <a href="mailto:info@eaglecourier.rw">
+                  <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
+                    <Mail size={15} /> info@eaglecourier.rw
+                  </span>
+                </a>
               </li>
               <li>
                 <span style={{ display: "inline-flex", alignItems: "center", gap: "0.5rem" }}>
