@@ -74,6 +74,12 @@ if (process.env.NODE_ENV !== "production") {
 
 const nextConfig = {
   reactStrictMode: true,
+  images: {
+    // Vercel's image optimizer returns 402 (payment required) on our plan,
+    // so serve the pre-optimized JPGs from /public directly.
+    // Remove this once the account has image optimization credits.
+    unoptimized: true
+  },
   experimental: {
     serverActions: {
       allowedOrigins: [...originHosts],
