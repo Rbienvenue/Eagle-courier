@@ -10,7 +10,8 @@
     "prisma:generate": "prisma generate",
     "postinstall": "prisma generate",
     "prisma:migrate": "prisma migrate dev",
-    "prisma:seed": "npx tsx prisma/seed.ts"
+    "prisma:seed": "npx tsx prisma/seed.ts",
+    "images:optimize": "node scripts/optimize-images.mjs"
   },
   "dependencies": {
     "@prisma/client": "^5.22.0",
@@ -44,6 +45,7 @@
     "eslint": "^9.15.0",
     "eslint-config-next": "^15.0.3",
     "postcss": "^8.5.15",
+    "sharp": "^0.35.5",
     "tailwindcss": "^4.3.1",
     "typescript": "^5.6.3"
   },
